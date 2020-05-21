@@ -30,13 +30,13 @@ const useFormFields = ({ initialValues, mode, validate, onSubmit }) => {
     };
   };
 
-  const handleSubmit = () => {
-    let errors = validate(values);
+  const handleSubmit = (state) => {
+    let errors = validate(state.values);
     if (Object.keys(errors).length > 0) {
-      dispatch({ type: SET_ERRORS, payload: errors });
+      return { ...state, errors: payload };
     } else {
       onSubmit(values);
-      dispatch({ type: SET_FIELDS, payload: { values: {}, mode: 'Create' } });
+      return setFormFields({ payload: { values: {}, mode: 'Create' } });
     }
   };
 
@@ -49,7 +49,7 @@ const useFormFields = ({ initialValues, mode, validate, onSubmit }) => {
       case SET_ERRORS:
         return { ...state, errors: payload };
       case SUBMIT:
-        handleSubmit();
+        return handleSubmit(state);
       default:
         return state;
     }
