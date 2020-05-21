@@ -4,6 +4,7 @@ import axios from 'axios';
 import VehicleList from './VehicleList';
 import SearchBar from './SearchBar';
 import { AuthContext } from '../../context/authContext';
+import { SET_LIST, CHANGE } from '../../actions/types';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,18 +17,24 @@ const useStyles = makeStyles((theme) => ({
 function VehicleTable(props) {
   const classes = useStyles();
   const {
+    state: { searchPhrase, filter, filteredList },
+    dispatch,
     setCurrent,
-    values: { searchPhrase, filter, filteredList },
-    onChange,
-    setList,
   } = props;
+  // const {
+  //   setCurrent,
+  //   values: { searchPhrase, filter, filteredList },
+  //   onChange,
+  //   setList,
+  // } = props;
   const auth = useContext(AuthContext);
 
   useEffect(() => {
     console.log('fetch data');
     const fetchData = async () => {
       const result = await axios.get(`api/vehicles/${auth}`);
-      setList(result.data);
+      // setList(result.data)
+      dispatch({ type: SET_LIST, payload: result.data });
     };
     fetchData();
   }, [auth]);
@@ -37,7 +44,7 @@ function VehicleTable(props) {
       <SearchBar
         searchPhrase={searchPhrase}
         filter={filter}
-        onChange={onChange}
+        dispatch={dispatch}
       />
       <div style={{ height: 'calc(100% - 64px)' }}>
         <VehicleList vehicles={filteredList} setCurrent={setCurrent} />

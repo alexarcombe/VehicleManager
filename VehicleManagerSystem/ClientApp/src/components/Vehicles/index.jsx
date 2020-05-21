@@ -10,6 +10,7 @@ import useFormFields from '../../hooks/useFormFields';
 import validate from './validate';
 import axios from 'axios';
 import { AuthContext } from '../../context/authContext';
+import { ADD, UPDATE, REMOVE } from '../../actions/types';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,9 +51,8 @@ function Vehicles() {
   const classes = useStyles();
   const [formMode, setFormMode] = useState('Create');
   const auth = useContext(AuthContext);
-  const [listValues, onChange, setList, update, add, remove] = useFilterSearch(
-    initialValuesFilter
-  );
+  // const [listValues, onChange, setList, update, add, remove] = [];
+  const [searchState, searchDispatch] = useFilterSearch(initialValuesFilter);
   const [
     values,
     errors,
@@ -72,7 +72,9 @@ function Vehicles() {
           ...rest,
         });
         console.log(result.data);
-        add(result.data);
+
+        // add(result.data);
+        searchDispatch({ type: ADD, payload: result.data });
       } else {
         result = await axios.put(`api/vehicles/${id}`, {
           id,
@@ -80,7 +82,8 @@ function Vehicles() {
           ...rest,
         });
         console.log(result.data);
-        update(result.data);
+        // update(result.data);
+        searchDispatch({ type: UPDATE, payload: result.data });
       }
       setFormMode('Create');
     },
@@ -89,7 +92,8 @@ function Vehicles() {
 
   const onDelete = async (id) => {
     axios.delete(`api/vehicles/${id}`);
-    remove(id);
+    // remove(id);
+    searchDispatch({ type: REMOVE, payload: id });
   };
 
   return (
@@ -100,9 +104,8 @@ function Vehicles() {
       <Grid className={classes.grid} container spacing={0}>
         <Grid item xs={12} sm={6}>
           <VehicleTable
-            values={listValues}
-            onChange={onChange}
-            setList={setList}
+            state={searchState}
+            dispatch={searchDispatch}
             setCurrent={(current) => {
               setFormFields(current);
               setFormMode('Selected');

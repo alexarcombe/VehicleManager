@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import { CHANGE } from '../../actions/types';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -14,8 +15,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SearchBar(props) {
-  const { searchPhrase, filter, onChange } = props;
+  const { searchPhrase, filter, dispatch } = props;
   const classes = useStyles();
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    dispatch({ type: CHANGE, payload: { name, value } });
+  };
 
   return (
     <form onSubmit={(e) => e.preventDefault()}>

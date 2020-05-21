@@ -1,62 +1,71 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
+import { CHANGE, SET_LIST, ADD, UPDATE, REMOVE } from '../actions/types';
+
+const onChange = (state, payload) => {
+  const { name, value } = payload;
+
+  const filter = name === 'filter' ? value : state.filter;
+  const searchPhrase = name === 'searchPhrase' ? value : state.searchPhrase;
+  const filtered = filterList(state.list, searchPhrase, filter);
+
+  return { ...state, [name]: value, filteredList: filtered };
+};
+
+const setList = (state, payload) => {
+  const { searchPhrase, filter } = state;
+  const filtered = filterList(payload, searchPhrase, filter);
+  return { ...state, list: payload, filteredList: filtered };
+};
+
+const add = (state, payload) => {
+  const filtered = filterList([payload], state.searchPhrase, state.filter);
+
+  return {
+    ...state,
+    list: [...state.list, payload],
+    filteredList: [...state.filteredList, ...filtered],
+  };
+};
+
+const update = (state, payload) => {
+  return {
+    ...state,
+    list: state.list.map((value) =>
+      value.id === payload.id ? payload : value
+    ),
+    filteredList: state.filteredList.map((value) =>
+      value.id === payload.id ? payload : value
+    ),
+  };
+};
+
+const remove = (state, payload) => {
+  return {
+    ...state,
+    list: state.list.filter((value) => value.id !== payload),
+    filteredList: state.filteredList.filter((value) => value.id !== payload),
+  };
+};
+
+const reducer = (state, { type, payload }) => {
+  switch (type) {
+    case CHANGE:
+      return onChange(state, payload);
+    case SET_LIST:
+      return setList(state, payload);
+    case ADD:
+      return add(state, payload);
+    case UPDATE:
+      return update(state, payload);
+    case REMOVE:
+      return remove(state, payload);
+  }
+};
 
 export default (initialValues = {}) => {
-  const [values, setValues] = useState(initialValues);
+  const [state, dispatch] = useReducer(reducer, initialValues);
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-
-    const filter = name === 'filter' ? value : values.filter;
-    const searchPhrase = name === 'searchPhrase' ? value : values.searchPhrase;
-    const filtered = filterList(values.list, searchPhrase, filter);
-
-    setValues((values) => {
-      return { ...values, [name]: value, filteredList: filtered };
-    });
-  };
-
-  const setList = (newList) => {
-    const { searchPhrase, filter } = values;
-    const filtered = filterList(newList, searchPhrase, filter);
-    setValues((values) => {
-      return { ...values, list: newList, filteredList: filtered };
-    });
-  };
-
-  const update = (value) => {
-    setValues((values) => {
-      return {
-        ...values,
-        list: values.list.map((x) => (x.id === value.id ? value : x)),
-        filteredList: values.filteredList.map((x) =>
-          x.id === value.id ? value : x
-        ),
-      };
-    });
-  };
-
-  const add = (value) => {
-    const filtered = filterList([value], values.searchPhrase, values.filter);
-    setValues((values) => {
-      return {
-        ...values,
-        list: [...values.list, value],
-        filteredList: [...values.filteredList, ...filtered],
-      };
-    });
-  };
-
-  const remove = (id) => {
-    setValues((values) => {
-      return {
-        ...values,
-        list: values.list.filter((value) => value.id !== id),
-        filteredList: values.filteredList.filter((value) => value.id !== id),
-      };
-    });
-  };
-
-  return [values, onChange, setList, update, add, remove];
+  return [state, dispatch];
 };
 
 const filterList = (list, searchPhrase, filter) => {
