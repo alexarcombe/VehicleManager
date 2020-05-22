@@ -21,8 +21,6 @@ namespace VehicleManagerSystem.Controllers
     public ActionResult<List<Vehicle>> Get(string customerId) =>
         _vehicleService.Get(customerId);
 
-
-
     // [HttpGet("{id:length(24)}", Name = "GetVehicle")]
     // public ActionResult<Vehicle> Get(string id)
     // {

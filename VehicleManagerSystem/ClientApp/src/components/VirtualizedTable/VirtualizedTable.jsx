@@ -102,7 +102,7 @@ class MuiVirtualizedTable extends React.PureComponent {
       <AutoSizer>
         {({ height, width }) => (
           <Table
-            height={height}
+            height={height < 48 ? 48 : height}
             width={width}
             rowHeight={rowHeight}
             gridStyle={{

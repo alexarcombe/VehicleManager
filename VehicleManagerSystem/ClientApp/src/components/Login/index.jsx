@@ -11,6 +11,69 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+function Login({ setSignedIn }) {
+  const classes = useStyles();
+  const history = useHistory();
+  const [customerId, setCustomerId] = useState('');
+  const [error, setError] = useState('');
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (customerId.length === 0) {
+      setError('You need to fill in a cutomer id.');
+    } else {
+      setSignedIn(customerId);
+      history.push('/vehicles');
+    }
+  };
+
+  return (
+    <Container maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in!
+        </Typography>
+        <form className={classes.form} noValidate onSubmit={onSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Customer Id"
+            name="email"
+            error={error.length !== 0}
+            helperText={error.length !== 0 && error}
+            value={customerId}
+            onChange={(e) => {
+              setCustomerId(e.target.value);
+              setError('');
+            }}
+            autoComplete="email"
+            autoFocus
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+        </form>
+      </div>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
+  );
+}
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -43,58 +106,5 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-
-function Login({ setSignedIn }) {
-  const classes = useStyles();
-  const history = useHistory();
-  const [customerId, setCustomerId] = useState('');
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    setSignedIn(customerId);
-    history.push('/vehicles');
-  };
-
-  return (
-    <Container maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in!
-        </Typography>
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Customer Id"
-            name="email"
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-            autoComplete="email"
-            autoFocus
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-        </form>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
-  );
-}
 
 export default Login;

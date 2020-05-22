@@ -12,5 +12,6 @@ export default (values) => {
   if (values.longitude < -180 || values.longitude > 180) {
     errors.longitude = 'Between -100 and 180.';
   }
-  return errors;
+  const hasErrors = Object.keys(errors).length > 0;
+  return { errors, hasErrors };
 };

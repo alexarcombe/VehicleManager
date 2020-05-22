@@ -19,7 +19,6 @@ const setList = (state, payload) => {
 
 const add = (state, payload) => {
   const filtered = filterList([payload], state.searchPhrase, state.filter);
-
   return {
     ...state,
     list: [...state.list, payload],
@@ -28,14 +27,15 @@ const add = (state, payload) => {
 };
 
 const update = (state, payload) => {
+  const newList = state.list.map((value) =>
+    value.id === payload.id ? payload : value
+  );
+  const filtered = filterList(newList, state.searchPhrase, state.filter);
+
   return {
     ...state,
-    list: state.list.map((value) =>
-      value.id === payload.id ? payload : value
-    ),
-    filteredList: state.filteredList.map((value) =>
-      value.id === payload.id ? payload : value
-    ),
+    list: newList,
+    filteredList: filtered,
   };
 };
 
@@ -59,11 +59,13 @@ const reducer = (state, { type, payload }) => {
       return update(state, payload);
     case REMOVE:
       return remove(state, payload);
+    default:
+      return state;
   }
 };
 
-export default (initialValues = {}) => {
-  const [state, dispatch] = useReducer(reducer, initialValues);
+export default (initialFilterValues = {}) => {
+  const [state, dispatch] = useReducer(reducer, initialFilterValues);
 
   return [state, dispatch];
 };

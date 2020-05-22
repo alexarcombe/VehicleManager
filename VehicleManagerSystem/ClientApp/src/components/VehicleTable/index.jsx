@@ -1,15 +1,16 @@
 import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
 import VehicleList from './VehicleList';
 import SearchBar from './SearchBar';
 import { AuthContext } from '../../context/authContext';
-import { SET_LIST, CHANGE } from '../../actions/types';
+import { SET_LIST } from '../../actions/types';
+import useVehicles from '../../api/useVehicles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: '100%',
+    minHeight: '300px',
     backgroundColor: theme.palette.background.paper,
   },
 }));
@@ -21,23 +22,14 @@ function VehicleTable(props) {
     dispatch,
     setCurrent,
   } = props;
-  // const {
-  //   setCurrent,
-  //   values: { searchPhrase, filter, filteredList },
-  //   onChange,
-  //   setList,
-  // } = props;
   const auth = useContext(AuthContext);
+  const { data } = useVehicles(auth);
 
   useEffect(() => {
-    console.log('fetch data');
-    const fetchData = async () => {
-      const result = await axios.get(`api/vehicles/${auth}`);
-      // setList(result.data)
-      dispatch({ type: SET_LIST, payload: result.data });
-    };
-    fetchData();
-  }, [auth]);
+    if (data !== undefined) {
+      dispatch({ type: SET_LIST, payload: data });
+    }
+  }, [data, dispatch]);
 
   return (
     <div className={classes.root}>

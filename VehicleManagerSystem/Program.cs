@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace VehicleManagerSystem
 {
@@ -13,7 +15,7 @@ namespace VehicleManagerSystem
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+                CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

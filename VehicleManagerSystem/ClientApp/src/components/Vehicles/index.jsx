@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
@@ -7,10 +7,63 @@ import VehicleTable from '../VehicleTable';
 import Vehicle from '../Vehicle';
 import useFilterSearch from '../../hooks/useFilterSearch';
 import useFormFields from '../../hooks/useFormFields';
-import validate from './validate';
-import axios from 'axios';
+import submit from './submit';
+import { initialFilterValues, initialFormValues } from '../../init';
 import { AuthContext } from '../../context/authContext';
-import { ADD, UPDATE, REMOVE } from '../../actions/types';
+import { removeVehicle } from '../../api/vehicleAPI';
+import { REMOVE, SET_FIELDS } from '../../actions/types';
+
+function Vehicles() {
+  const classes = useStyles();
+  const auth = useContext(AuthContext);
+  const [searchState, searchDispatch] = useFilterSearch(initialFilterValues);
+  const [formState, formDispatch] = useFormFields(initialFormValues);
+
+  const onDelete = async (id) => {
+    removeVehicle(id);
+    searchDispatch({ type: REMOVE, payload: id });
+    formDispatch({
+      type: SET_FIELDS,
+      payload: { values: initialFormValues, mode: 'create' },
+    });
+  };
+
+  const onSubmit = () => {
+    submit(auth, formState.values, searchDispatch, formDispatch);
+  };
+
+  const setCurrent = (current) => {
+    formDispatch({
+      type: SET_FIELDS,
+      payload: { values: current, mode: 'Selected' },
+    });
+  };
+
+  return (
+    <Container className={classes.root}>
+      <Typography component="h1" variant="h3">
+        Vehicles
+      </Typography>
+      <Grid className={classes.grid} container spacing={0}>
+        <Grid item xs={12} sm={6}>
+          <VehicleTable
+            state={searchState}
+            dispatch={searchDispatch}
+            setCurrent={setCurrent}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Vehicle
+            state={formState}
+            dispatch={formDispatch}
+            submit={onSubmit}
+            remove={onDelete}
+          />
+        </Grid>
+      </Grid>
+    </Container>
+  );
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,105 +81,5 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
 }));
-
-const initialValuesFilter = {
-  searchPhrase: '',
-  filter: 'name',
-  list: [],
-  filteredList: [],
-};
-
-const initialValues = {
-  name: '',
-  model: '',
-  tags: '',
-  speed: '0',
-  latitude: '-36.8077324',
-  longitude: '174.7837708',
-  sensors: [],
-  comments: [],
-};
-
-function Vehicles() {
-  const classes = useStyles();
-  const [formMode, setFormMode] = useState('Create');
-  const auth = useContext(AuthContext);
-  // const [listValues, onChange, setList, update, add, remove] = [];
-  const [searchState, searchDispatch] = useFilterSearch(initialValuesFilter);
-  const [
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    setFormFields,
-  ] = useFormFields({
-    initialValues,
-    onSubmit: async (values) => {
-      let result;
-      let { id, tags, ...rest } = values;
-      tags = tags.split(',').map((tag) => tag.trimLeft());
-      if (id === undefined) {
-        result = await axios.post('api/vehicles', {
-          customerId: auth,
-          tags,
-          ...rest,
-        });
-        console.log(result.data);
-
-        // add(result.data);
-        searchDispatch({ type: ADD, payload: result.data });
-      } else {
-        result = await axios.put(`api/vehicles/${id}`, {
-          id,
-          tags,
-          ...rest,
-        });
-        console.log(result.data);
-        // update(result.data);
-        searchDispatch({ type: UPDATE, payload: result.data });
-      }
-      setFormMode('Create');
-    },
-    validate,
-  });
-
-  const onDelete = async (id) => {
-    axios.delete(`api/vehicles/${id}`);
-    // remove(id);
-    searchDispatch({ type: REMOVE, payload: id });
-  };
-
-  return (
-    <Container className={classes.root}>
-      <Typography component="h1" variant="h3">
-        Vehicles
-      </Typography>
-      <Grid className={classes.grid} container spacing={0}>
-        <Grid item xs={12} sm={6}>
-          <VehicleTable
-            state={searchState}
-            dispatch={searchDispatch}
-            setCurrent={(current) => {
-              setFormFields(current);
-              setFormMode('Selected');
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Vehicle
-            values={values}
-            errors={errors}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            setFormFields={setFormFields}
-            formMode={formMode}
-            setFormMode={setFormMode}
-            remove={onDelete}
-          />
-        </Grid>
-      </Grid>
-    </Container>
-  );
-}
 
 export default Vehicles;

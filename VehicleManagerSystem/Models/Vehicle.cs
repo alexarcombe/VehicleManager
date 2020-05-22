@@ -23,9 +23,9 @@ namespace VehicleManagerSystem.Models
 
     public string longitude { get; set; }
 
-    public object[] sensors { get; set; }
+    public Sensor[] sensors { get; set; }
 
-    public object[] comments { get; set; }
+    public Comment[] comments { get; set; }
 
   }
 }
