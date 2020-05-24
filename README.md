@@ -2,7 +2,7 @@
 
 A app built for Coretex code challange, built with a react front-end, .net back-end and a MongDB. Hosted on Azure https://vehiclemanagersystem.azurewebsites.net/ with a Cosmos db.
 
-## Host localy
+## Host locally
 
 ### Prerequests
 
