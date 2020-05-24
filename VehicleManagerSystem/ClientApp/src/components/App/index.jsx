@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Navbar from '../Layout/Navbar';
 import Login from '../Login';
-import Vehicles from '../Vehicles';
-import './App.css';
+import VehicleManager from '../VehicleManager';
 import { AuthContext } from '../../context/authContext';
+import './App.css';
 
 function App() {
   const [signedIn, setSignedIn] = useState('');
@@ -20,7 +20,7 @@ function App() {
             <Login setSignedIn={setSignedIn} />
           </Route>
           <Route path="/vehicles" exact>
-            <Vehicles />
+            <VehicleManager />
           </Route>
         </Switch>
       </AuthContext.Provider>

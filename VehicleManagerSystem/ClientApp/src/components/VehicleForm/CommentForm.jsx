@@ -28,7 +28,7 @@ function CommentForm(props) {
 
   return (
     <>
-      <DialogTitle id="form-dialog-title">Create a Comment!</DialogTitle>
+      <DialogTitle id="form-dialog-title">Create a Comment</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus

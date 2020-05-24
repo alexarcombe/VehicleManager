@@ -26,7 +26,7 @@ function SensorForm(props) {
 
   return (
     <>
-      <DialogTitle>Add a Sensor!</DialogTitle>
+      <DialogTitle>Add a Sensor</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus

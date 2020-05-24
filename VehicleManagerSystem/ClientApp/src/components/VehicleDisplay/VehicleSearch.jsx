@@ -7,14 +7,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { CHANGE } from '../../actions/types';
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-}));
-
-export default function SearchBar(props) {
+function VehicleSearch(props) {
   const { searchPhrase, filter, dispatch } = props;
   const classes = useStyles();
 
@@ -49,3 +42,12 @@ export default function SearchBar(props) {
     </form>
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+}));
+
+export default VehicleSearch;

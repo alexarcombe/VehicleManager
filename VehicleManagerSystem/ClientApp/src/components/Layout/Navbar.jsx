@@ -3,18 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, Button, colors } from '@material-ui/core';
 import { NavLink } from 'react-router-dom';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  title: {
-    flexGrow: 1,
-  },
-  color: {
-    backgroundColor: colors.deepOrange[400],
-  },
-}));
-
 function Navbar({ signedIn, setSignedIn }) {
   const classes = useStyles();
   return (
@@ -51,5 +39,17 @@ function getLoggingButton(signedIn, setSignedIn) {
   }
   return content;
 }
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  title: {
+    flexGrow: 1,
+  },
+  color: {
+    backgroundColor: colors.deepOrange[400],
+  },
+}));
 
 export default Navbar;

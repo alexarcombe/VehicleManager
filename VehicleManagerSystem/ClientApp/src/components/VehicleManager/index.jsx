@@ -1,35 +1,46 @@
 import React, { useContext } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import VehicleTable from '../VehicleTable';
-import Vehicle from '../Vehicle';
+import {
+  makeStyles,
+  Container,
+  Typography,
+  Grid,
+  colors,
+} from '@material-ui/core';
+import { AuthContext } from '../../context/authContext';
+import VehicleForm from '../VehicleForm';
+import VehicleDisplay from '../VehicleDisplay';
+
+// utility
+import submit from './submit';
+import { removeVehicle } from '../../api/vehicleAPI';
+
+// Hooks
+import { initialFilterValues, initialFormValues } from '../../init';
 import useFilterSearch from '../../hooks/useFilterSearch';
 import useFormFields from '../../hooks/useFormFields';
-import submit from './submit';
-import { initialFilterValues, initialFormValues } from '../../init';
-import { AuthContext } from '../../context/authContext';
-import { removeVehicle } from '../../api/vehicleAPI';
 import { REMOVE, SET_FIELDS } from '../../actions/types';
 
-function Vehicles() {
+function VehicleManager() {
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const [searchState, searchDispatch] = useFilterSearch(initialFilterValues);
   const [formState, formDispatch] = useFormFields(initialFormValues);
 
-  const onDelete = async (id) => {
-    removeVehicle(id);
-    searchDispatch({ type: REMOVE, payload: id });
-    formDispatch({
-      type: SET_FIELDS,
-      payload: { values: initialFormValues, mode: 'create' },
-    });
-  };
-
   const onSubmit = () => {
     submit(auth, formState.values, searchDispatch, formDispatch);
+  };
+
+  const onDelete = async (id) => {
+    const { error } = removeVehicle(id);
+    if (!error) {
+      searchDispatch({ type: REMOVE, payload: id });
+      formDispatch({
+        type: SET_FIELDS,
+        payload: { values: initialFormValues, mode: 'create' },
+      });
+    } else {
+      console.log(error);
+    }
   };
 
   const setCurrent = (current) => {
@@ -44,16 +55,16 @@ function Vehicles() {
       <Typography component="h1" variant="h3">
         Vehicles
       </Typography>
-      <Grid className={classes.grid} container spacing={0}>
+      <Grid className={classes.grid} container spacing={1}>
         <Grid item xs={12} sm={6}>
-          <VehicleTable
+          <VehicleDisplay
             state={searchState}
             dispatch={searchDispatch}
             setCurrent={setCurrent}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <Vehicle
+          <VehicleForm
             state={formState}
             dispatch={formDispatch}
             submit={onSubmit}
@@ -71,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
     height: 'calc(100% - 64px)',
     textAlign: 'center',
     paddingTop: theme.spacing(3),
+    backgroundColor: colors.grey[200],
   },
   grid: {
     height: 'calc(90% - 56px)',
@@ -82,4 +94,4 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default Vehicles;
+export default VehicleManager;

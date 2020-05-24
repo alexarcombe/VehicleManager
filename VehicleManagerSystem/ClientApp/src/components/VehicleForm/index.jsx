@@ -3,11 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField, Grid, colors } from '@material-ui/core/';
 import { Add } from '@material-ui/icons';
 import Actions from './Actions';
-import SensorList from './SensorList';
-import CommentList from './CommentList';
 import Dialog from '../Layout/Dialog';
 import CommentForm from './CommentForm';
 import SensorForm from './SensorForm';
+import FormTable from './FormTable';
 import { AuthContext } from '../../context/authContext';
 import { CHANGE } from '../../actions/types';
 
@@ -16,7 +15,7 @@ const onChange = (e, dispatch) => {
   dispatch({ type: CHANGE, payload: { id, value } });
 };
 
-export default function Vehicle(props) {
+function VehicleForm(props) {
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const [commentFormOpen, setCommentFormOpen] = useState(false);
@@ -116,7 +115,11 @@ export default function Vehicle(props) {
                 onClick={() => setSensorFormOpen(auth !== '' && true)}
               />
             </span>
-            <SensorList sensors={values.sensors} />
+            <FormTable
+              title="Sensor"
+              values={values.sensors}
+              withDialog={true}
+            />
           </Grid>
           <Grid item xs={6} style={{ textAlign: 'center' }}>
             <span>
@@ -127,7 +130,11 @@ export default function Vehicle(props) {
                 onClick={() => setCommentFormOpen(auth !== '' && true)}
               />
             </span>
-            <CommentList comments={values.comments} />
+            <FormTable
+              title="Comment"
+              values={values.comments}
+              withDialog={true}
+            />
           </Grid>
         </Grid>
       </form>
@@ -184,6 +191,9 @@ const useStyles = makeStyles((theme) => ({
     height: '25%',
   },
   add: {
+    cursor: 'pointer',
     color: colors.green[800],
   },
 }));
+
+export default VehicleForm;

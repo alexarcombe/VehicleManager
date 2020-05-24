@@ -1,7 +1,7 @@
 import React from 'react';
 import VirtualizedTable from '../VirtualizedTable/VirtualizedTable';
 
-export default function VechileList(props) {
+function VehicleTable(props) {
   const { vehicles, setCurrent } = props;
   return (
     <VirtualizedTable
@@ -33,3 +33,5 @@ export default function VechileList(props) {
     />
   );
 }
+
+export default VehicleTable;
